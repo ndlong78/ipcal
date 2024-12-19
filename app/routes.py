@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, request
 from .calculations import calculate_ipv4, calculate_subnet, validate_regex
 from .debug import log_request
-from .conversions import convert_network_input  # Import hàm chuyển đổi
 
 main_bp = Blueprint('main', __name__)
 
@@ -18,8 +17,7 @@ def calculate():
         result['ipv4'] = calculate_ipv4(request.form['ipv4'])
 
     if 'network' in request.form:
-        network_input = request.form['network']
-        result['network'] = convert_network_input(network_input)
+        result['network'] = calculate_subnet(request.form['network'])
 
     if 'regex' in request.form and 'text' in request.form:
         result['regex'] = validate_regex(request.form['regex'], request.form['text'])
