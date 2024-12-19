@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request
-from .calculations import calculate_ipv4, calculate_subnet, validate_regex
+from .calculations import calculate_ipv4, calculate_network_and_subnet, validate_regex
 from .debug import log_request
 
 main_bp = Blueprint('main', __name__)
@@ -17,7 +17,7 @@ def calculate():
         result['ipv4'] = calculate_ipv4(request.form['ipv4'])
 
     if 'network' in request.form:
-        result['network'] = calculate_subnet(request.form['network'])
+        result['network'] = calculate_network_and_subnet(request.form['network'])
 
     if 'regex' in request.form and 'text' in request.form:
         result['regex'] = validate_regex(request.form['regex'], request.form['text'])
