@@ -25,15 +25,17 @@ def netmask_to_cidr(netmask):
     except ValueError:
         return None
 
-def calculate_network_and_subnet(network_input):
+def calculate_network_and_subnet(ip_address, network_input):
     try:
         if '/' in network_input:
             # Input is in CIDR format
             network = ipaddress.ip_network(network_input, strict=False)
+        elif ip_address:
+            # Input is in IP + Netmask format
+            ip = ipaddress.ip_interface(f"{ip_address}/{network_input}")
+            network = ip.network
         else:
-            # Assume input is in IP + Netmask format
-            ip, netmask = network_input.split()
-            network = ipaddress.ip_network(f"{ip}/{netmask}", strict=False)
+            return {"error": "Invalid network input. IP address is required with netmask."}
         return {
             "Network Address": str(network.network_address),
             "CIDR": str(network.prefixlen),
