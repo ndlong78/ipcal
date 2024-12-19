@@ -1,6 +1,3 @@
-#Đây là nơi định nghĩa các route của ứng dụng.
-
-
 from flask import Blueprint, render_template, request
 from .calculations import calculate_ipv4, calculate_subnet, validate_regex
 from .debug import log_request
