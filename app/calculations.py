@@ -31,7 +31,7 @@ def calculate_network_and_subnet(network_input):
             # Input is in CIDR format
             network = ipaddress.ip_network(network_input, strict=False)
         else:
-            # Input is in IP + Netmask format
+            # Assume input is in IP + Netmask format
             ip, netmask = network_input.split()
             network = ipaddress.ip_network(f"{ip}/{netmask}", strict=False)
         return {
