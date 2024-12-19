@@ -1,0 +1,36 @@
+#Tệp HTML để tạo giao diện người dùng.
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPv4, Subnet, Regex Calculator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>IPv4, Subnet, Regex Calculator</h1>
+    <form method="post" action="/calculate">
+        <div>
+            <label for="ipv4">IPv4 Address:</label>
+            <input type="text" id="ipv4" name="ipv4">
+        </div>
+        <div>
+            <label for="network">Network (CIDR):</label>
+            <input type="text" id="network" name="network">
+        </div>
+        <div>
+            <label for="regex">Regex Pattern:</label>
+            <input type="text" id="regex" name="regex">
+            <label for="text">Text:</label>
+            <input type="text" id="text" name="text">
+        </div>
+        <button type="submit">Calculate</button>
+    </form>
+
+    {% if result %}
+        <h2>Results:</h2>
+        <pre>{{ result }}</pre>
+    {% endif %}
+</body>
+</html>
