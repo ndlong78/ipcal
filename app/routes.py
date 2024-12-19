@@ -13,11 +13,14 @@ def calculate():
     log_request(request)
     result = {}
 
-    if 'ipv4' in request.form:
-        result['ipv4'] = calculate_ipv4(request.form['ipv4'])
+    ipv4_address = request.form.get('ipv4')
+    network_input = request.form.get('network')
 
-    if 'network' in request.form:
-        result['network'] = calculate_network_and_subnet(request.form['network'])
+    if ipv4_address:
+        result['ipv4'] = calculate_ipv4(ipv4_address)
+
+    if network_input:
+        result['network'] = calculate_network_and_subnet(ipv4_address, network_input)
 
     if 'regex' in request.form and 'text' in request.form:
         result['regex'] = validate_regex(request.form['regex'], request.form['text'])
