@@ -11,14 +11,44 @@ def calculate_ipv4(ip_address):
     except ValueError:
         return {"error": "Invalid IPv4 address"}
 
-def calculate_subnet(network):
+def cidr_to_netmask(cidr):
     try:
-        net = ipaddress.ip_network(network, strict=False)
-        return {
-            "Network Address": str(net.network_address),
-            "Subnet Mask": str(net.netmask),
-            "Total Hosts": net.num_addresses
-        }
+        network = ipaddress.ip_network('0.0.0.0/' + cidr, strict=False)
+        return str(network.netmask)
+    except ValueError:
+        return None
+
+def netmask_to_cidr(netmask):
+    try:
+        network = ipaddress.IPv4Network('0.0.0.0/' + netmask, strict=False)
+        return str(network.prefixlen)
+    except ValueError:
+        return None
+
+def calculate_network_and_subnet(network_input):
+    try:
+        if '/' in network_input:
+            # Assume input is in CIDR format
+            network = ipaddress.ip_network(network_input, strict=False)
+            return {
+                "Network Address": str(network.network_address),
+                "CIDR": str(network.prefixlen),
+                "Netmask": str(network.netmask),
+                "Total Hosts": network.num_addresses
+            }
+        else:
+            # Assume input is in Netmask format
+            cidr = netmask_to_cidr(network_input)
+            if cidr:
+                network = ipaddress.ip_network('0.0.0.0/' + cidr, strict=False)
+                return {
+                    "Network Address": str(network.network_address),
+                    "CIDR": str(network.prefixlen),
+                    "Netmask": network_input,
+                    "Total Hosts": network.num_addresses
+                }
+            else:
+                return {"error": "Invalid network"}
     except ValueError:
         return {"error": "Invalid network"}
 
