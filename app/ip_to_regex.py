@@ -1,4 +1,5 @@
 import re
+import ipaddress
 
 def ip_to_regex(ip_cidr):
     """
@@ -10,38 +11,25 @@ def ip_to_regex(ip_cidr):
     Returns:
         str: Regex matching the IP range.
     """
-    # Parse the IP address and CIDR
-    ip, cidr = ip_cidr.split('/')
-    cidr = int(cidr)
+    network = ipaddress.ip_network(ip_cidr, strict=False)
+    first_ip = int(network.network_address)
+    last_ip = int(network.broadcast_address)
 
-    # Convert IP to a list of octets
-    octets = list(map(int, ip.split('.')))
-
-    # Determine the number of bits for the host part
-    host_bits = 32 - cidr
-
-    # Calculate the number of addresses in the range
-    num_addresses = 2 ** host_bits
-
-    # Calculate the start and end addresses
-    start_ip = (octets[0] << 24) | (octets[1] << 16) | (octets[2] << 8) | octets[3]
-    end_ip = start_ip + num_addresses - 1
-
-    # Convert the range of addresses to regex
     def ip_to_octets(ip):
         return [(ip >> 24) & 0xFF, (ip >> 16) & 0xFF, (ip >> 8) & 0xFF, ip & 0xFF]
 
-    start_octets = ip_to_octets(start_ip)
-    end_octets = ip_to_octets(end_ip)
+    start_octets = ip_to_octets(first_ip)
+    end_octets = ip_to_octets(last_ip)
 
     regex_parts = []
     for i in range(4):
         if start_octets[i] == end_octets[i]:
             regex_parts.append(f"{start_octets[i]}")
         else:
-            regex_parts.append(f"[{start_octets[i]}-{end_octets[i]}]")
+            regex_parts.append(f"({start_octets[i]}-{end_octets[i]})")
 
-    return f"^{'.'.join(regex_parts)}$"
+    # Use string join without f-strings for the literal backslash
+    return "^" + r"\.".join(regex_parts) + "$"
 
 def validate_regex(pattern, text):
     """

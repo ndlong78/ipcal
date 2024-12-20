@@ -1,5 +1,3 @@
-#Tệp này khởi tạo ứng dụng Flask và đăng ký các blueprint.
-
 from flask import Flask
 
 def create_app():
