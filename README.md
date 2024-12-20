@@ -69,10 +69,13 @@ This is a Flask-based application for calculating and validating IPv4 addresses,
 
 4. Run the Docker container:
     ```sh
-    docker-compose up
+    docker-compose up -d
     ```
-
-5. Access the application by navigating to `http://localhost:5000` in your web browser.
+5. check docker log
+    ```sh
+    docker logs -f  ipcal_app_1
+    ```
+6. Access the application by navigating to `http://localhost:5000` in your web browser.
 
 ## Project Structure
 ```sh
