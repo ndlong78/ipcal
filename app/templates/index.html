@@ -24,13 +24,20 @@
         {% if result %}
             <h2>Results:</h2>
             <div class="result">
-                {% for key, value in result.items() %}
-                    {% if key == 'regex' %}
-                        <p><strong>{{ key }}:</strong> <code>{{ value['pattern'] }}</code></p>
-                    {% else %}
-                        <p><strong>{{ key }}:</strong> {{ value }}</p>
-                    {% endif %}
+                <h3>IPv4 Details:</h3>
+                {% for key, value in result['ipv4'].items() %}
+                    <p><strong>{{ key }}:</strong> {{ value }}</p>
                 {% endfor %}
+                
+                <h3>Network Details:</h3>
+                {% for key, value in result['network'].items() %}
+                    <p><strong>{{ key }}:</strong> {{ value }}</p>
+                {% endfor %}
+                
+                {% if result['regex'] %}
+                    <h3>Regex Pattern:</h3>
+                    <pre><code>{{ result['regex']['pattern'] }}</code></pre>
+                {% endif %}
             </div>
         {% endif %}
     </div>

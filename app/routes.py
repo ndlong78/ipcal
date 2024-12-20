@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, request
 from .calculations import calculate_ipv4, calculate_network_and_subnet
 from .ip_to_regex import ip_to_regex, validate_regex
-from .debug import log_request
 
 main_bp = Blueprint('main', __name__)
 
@@ -11,7 +10,6 @@ def index():
 
 @main_bp.route('/calculate', methods=['POST'])
 def calculate():
-    log_request(request)
     result = {}
 
     ipv4_address = request.form.get('ipv4')
