@@ -37,20 +37,18 @@ This project is a simple Flask application that calculates IPv4 details, network
 This project is licensed under the MIT License.
 
 
+## Quick install to /otp
+```sh
+
 cd /opt
-
+rm -rf ipcal/
 git clone https://github.com/ndlong78/ipcal.git
-
 cd /opt/ipcal
 
+python3 -m venv venv
 source venv/bin/activate
-
-chmod -R 755 templates/
-
-chmod -R 755 static/
-
-chmod 644 templates/index.html
-
-chmod 644 static/style.css
+pip install -r requirements.txt
 
 python3 run.py
+
+```
