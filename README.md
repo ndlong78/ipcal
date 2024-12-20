@@ -49,7 +49,7 @@ This is a Flask-based application for calculating and validating IPv4 addresses,
 
 5. Run the application:
     ```sh
-    python run.py
+    python3 run.py
     ```
 
 ### Using Docker
