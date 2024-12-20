@@ -6,7 +6,7 @@ def calculate_ipv4(ip_address):
         return {
             "IP Address": str(ip),
             "Is Private": ip.is_private,
-            "Is Global": ip.is_global
+            "Is Global": not ip.is_private
         }
     except ValueError:
         return {"error": "Invalid IPv4 address"}
@@ -36,11 +36,20 @@ def calculate_network_and_subnet(ip_address, network_input):
             network = ip.network
         else:
             return {"error": "Invalid network input. IP address is required with netmask."}
+        
+        # Calculate Wildcard, HostMin, HostMax
+        wildcard = str(ipaddress.IPv4Address(int(network.hostmask)))
+        host_min = str(network.network_address + 1)
+        host_max = str(network.broadcast_address - 1)
+        
         return {
             "Network Address": str(network.network_address),
             "CIDR": str(network.prefixlen),
             "Netmask": str(network.netmask),
-            "Total Hosts": network.num_addresses
+            "Wildcard": wildcard,
+            "HostMin": host_min,
+            "HostMax": host_max,
+            "Total Hosts": network.num_addresses - 2  # Subtract network and broadcast addresses
         }
     except ValueError:
         return {"error": "Invalid network"}
