@@ -84,9 +84,9 @@ This is a Flask-based application for calculating and validating IPv4 addresses,
 │ ├── ip_to_regex.py
 │ ├── routes.py
 │ └── templates
-│   └── index.html
+│    └── index.html
 │ └── static
-│   └── style.css
+│    └── style.css
 ├── requirements.txt
 ├── Dockerfile
 ├── docker-compose.yml
