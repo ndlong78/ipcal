@@ -75,12 +75,8 @@ This is a Flask-based application for calculating and validating IPv4 addresses,
 5. Access the application by navigating to `http://localhost:5000` in your web browser.
 
 ## Project Structure
-<<<<<<< HEAD
     ```sh
 
-=======
-```sh
->>>>>>> 9745d56c56789bb936dfddcaa60a907b7a32cb42
 /opt/ipcal
 ├── app
 │ ├── init.py
@@ -112,12 +108,8 @@ This is a Flask-based application for calculating and validating IPv4 addresses,
 - **docker-compose.yml**: Defines the Docker services for the application.
 - **.dockerignore**: Lists files and directories to be ignored by Docker.
 - **run.py**: The main entry point to run the Flask application.
-<<<<<<< HEAD
     
     ```
-=======
-```
->>>>>>> 9745d56c56789bb936dfddcaa60a907b7a32cb42
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
