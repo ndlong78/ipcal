@@ -1,8 +1,16 @@
 from flask import Blueprint, render_template, request
+import re
 from .calculations import calculate_ipv4, calculate_network_and_subnet
 from .ip_to_regex import ip_to_regex, validate_regex
 
 main_bp = Blueprint('main', __name__)
+
+def filter_ip_input(ip_input):
+    # Regular expression to match valid IP address characters
+    valid_ip_pattern = re.compile(r'[^0-9./]')
+    # Remove invalid characters
+    filtered_ip = re.sub(valid_ip_pattern, '', ip_input)
+    return filtered_ip
 
 @main_bp.route('/')
 def index():
@@ -12,8 +20,8 @@ def index():
 def calculate():
     result = {}
 
-    ipv4_address = request.form.get('ipv4')
-    network_input = request.form.get('network')
+    ipv4_address = filter_ip_input(request.form.get('ipv4'))
+    network_input = filter_ip_input(request.form.get('network'))
 
     if ipv4_address:
         ipv4_result = calculate_ipv4(ipv4_address)

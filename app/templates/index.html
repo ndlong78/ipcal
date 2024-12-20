@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IPv4, Subnet, Regex Calculator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function filterIP(input) {
+            // Regular expression to match valid IP address characters
+            const validChars = /[^0-9.]/g;
+            // Remove invalid characters
+            input.value = input.value.replace(validChars, '');
+        }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -12,11 +20,11 @@
         <form method="post" action="/calculate">
             <div>
                 <label for="ipv4">IPv4 Address:</label>
-                <input type="text" id="ipv4" name="ipv4">
+                <input type="text" id="ipv4" name="ipv4" oninput="filterIP(this)">
             </div>
             <div>
                 <label for="network">Network (CIDR or IP + Netmask):</label>
-                <input type="text" id="network" name="network">
+                <input type="text" id="network" name="network" oninput="filterIP(this)">
             </div>
             <button type="submit">Calculate</button>
         </form>
