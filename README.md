@@ -6,7 +6,7 @@ This project is a simple Flask application that calculates IPv4 details, network
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/ipcal.git
+    git clone https://github.com/ndlong78/ipcal.git
     cd ipcal
     ```
 
