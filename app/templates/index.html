@@ -8,7 +8,7 @@
     <script>
         function filterIP(input) {
             // Regular expression to match valid IP address characters
-            const validChars = /[^0-9.]/g;
+            const validChars = /[^0-9./]/g;
             // Remove invalid characters
             input.value = input.value.replace(validChars, '');
         }
