@@ -11,4 +11,4 @@ COPY . .
 ENV GUNICORN_WORKERS=4
 
 # Sử dụng lệnh CMD để chạy Gunicorn với module và thuộc tính đúng
-CMD ["gunicorn", "--workers", "${GUNICORN_WORKERS}", "app:app"]
+CMD ["gunicorn", "--workers", "${GUNICORN_WORKERS}", "--bind", "0.0.0.0:8000", "app:app"]
