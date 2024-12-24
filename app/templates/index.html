@@ -31,10 +31,20 @@
             </div>
             <div>
                 <label for="network">Network (CIDR or IP + Netmask):</label>
-                <input type="text" id="network" name="network" oninput="filterIP(this)">
+                <input type="text" id="network" name="network" oninput="filterIP(this)" required>
             </div>
             <button type="submit">Calculate</button>
         </form>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
 
         {% if result %}
             <h2>Results:</h2>
