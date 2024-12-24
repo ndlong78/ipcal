@@ -22,20 +22,6 @@ def calculate_ipv6(ip_address):
     except ValueError:
         return {"error": "Invalid IPv6 address"}
 
-def cidr_to_netmask(cidr):
-    try:
-        network = ipaddress.ip_network('0.0.0.0/' + cidr, strict=False)
-        return str(network.netmask)
-    except ValueError:
-        return None
-
-def netmask_to_cidr(netmask):
-    try:
-        network = ipaddress.IPv4Network('0.0.0.0/' + netmask, strict=False)
-        return str(network.prefixlen)
-    except ValueError:
-        return None
-
 def calculate_network_and_subnet(ip_address, network_input, ip_version='ipv4'):
     try:
         if ip_version == 'ipv4':
@@ -73,12 +59,3 @@ def calculate_network_and_subnet(ip_address, network_input, ip_version='ipv4'):
         }
     except ValueError:
         return {"error": "Invalid network"}
-
-def validate_regex(pattern, text):
-    import re
-    try:
-        regex = re.compile(pattern)
-        matches = regex.findall(text)
-        return {"matches": matches}
-    except re.error:
-        return {"error": "Invalid regex pattern"}

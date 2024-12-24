@@ -1,10 +1,9 @@
 import logging
-import warnings
 from flask import Blueprint, render_template, request, flash
 import re
 import ipaddress
 from .calculations import calculate_ipv4, calculate_ipv6, calculate_network_and_subnet
-from .ip_to_regex import ip_to_regex, validate_regex
+from .ip_to_regex import ip_to_regex
 
 # Thiết lập logging
 logging.basicConfig(level=logging.DEBUG)
@@ -61,7 +60,6 @@ def calculate():
 
     if not network_input or not is_valid_cidr_or_netmask(network_input):
         error_message = "Invalid network input. Please enter a valid CIDR or IP + Netmask."
-        warnings.warn(error_message)
         flash(error_message, 'error')
         return render_template('index.html')
 
@@ -75,8 +73,9 @@ def calculate():
             network_result = calculate_network_and_subnet(ip_address, network_input, ip_version='ipv6')
 
         if 'error' in network_result:
-            warnings.warn(f"Invalid network input: {network_input}")
-        
+            flash(f"Invalid network input: {network_input}", 'error')
+            return render_template('index.html')
+
         result['ip'] = ip_result
         result['network'] = network_result
 
@@ -86,7 +85,6 @@ def calculate():
             result['regex'] = {"pattern": regex_pattern}
     except ValueError:
         error_message = "Invalid IP address."
-        warnings.warn(error_message)
         flash(error_message, 'error')
         return render_template('index.html')
 

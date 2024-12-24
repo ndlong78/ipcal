@@ -65,14 +65,3 @@ def validate_regex(pattern, text):
         return {"matches": matches}
     except re.error:
         return {"error": "Invalid regex pattern"}
-
-# Example usage
-if __name__ == "__main__":
-    ipv4_cidr = "192.168.1.0/24"
-    ipv6_cidr = "2001:db8::/64"
-
-    ipv4_regex = ip_to_regex(ipv4_cidr)
-    ipv6_regex = ip_to_regex(ipv6_cidr)
-
-    print(f"IPv4 CIDR: {ipv4_cidr} -> Regex: {ipv4_regex}")
-    print(f"IPv6 CIDR: {ipv6_cidr} -> Regex: {ipv6_regex}")

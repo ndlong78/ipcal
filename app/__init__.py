@@ -5,7 +5,8 @@ def create_app():
 
     # Bật chế độ debug
     app.config['DEBUG'] = True
-    app.secret_key = 'your_secret_key_here'
+    # Thay thế 'your_secret_key_here' bằng một chuỗi bí mật thực sự
+    app.secret_key = 'J!T$2XSizvQSV4w!'
 
     from .routes import main_bp
     app.register_blueprint(main_bp)
