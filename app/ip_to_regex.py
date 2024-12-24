@@ -19,7 +19,7 @@ def ip_to_regex(ip_cidr):
         return [(ip >> 24) & 0xFF, (ip >> 16) & 0xFF, (ip >> 8) & 0xFF, ip & 0xFF]
 
     def ipv6_to_hextets(ip):
-        return [(ip >> (8 * i)) & 0xFFFF for i in range(7, -1, -1)]
+        return [(ip >> (16 * i)) & 0xFFFF for i in range(7, -1, -1)]
 
     if network.version == 4:
         start_octets = ipv4_to_octets(first_ip)
@@ -69,7 +69,7 @@ def validate_regex(pattern, text):
 # Example usage
 if __name__ == "__main__":
     ipv4_cidr = "192.168.1.0/24"
-    ipv6_cidr = "2001:0db8:85a3::/64"
+    ipv6_cidr = "2001:db8::/64"
 
     ipv4_regex = ip_to_regex(ipv4_cidr)
     ipv6_regex = ip_to_regex(ipv6_cidr)
