@@ -19,6 +19,24 @@ def filter_ip_input(ip_input):
     logging.debug(f"Filtered IP input: {filtered_ip}")
     return filtered_ip
 
+def is_valid_cidr_or_netmask(network_input):
+    try:
+        # Kiểm tra nếu là CIDR
+        ipaddress.ip_network(network_input, strict=False)
+        return True
+    except ValueError:
+        # Kiểm tra nếu là Netmask
+        parts = network_input.split()
+        if len(parts) == 2:
+            ip, netmask = parts
+            try:
+                ipaddress.ip_address(ip)
+                ipaddress.IPv4Network(f"0.0.0.0/{netmask}", strict=False)
+                return True
+            except ValueError:
+                pass
+    return False
+
 @main_bp.route('/')
 def index():
     return render_template('index.html')
@@ -32,8 +50,8 @@ def calculate():
 
     logging.debug(f"IP address: {ip_address}, Network input: {network_input}")
 
-    if not network_input:
-        error_message = "Network input is required."
+    if not network_input or not is_valid_cidr_or_netmask(network_input):
+        error_message = "Invalid network input. Please enter a valid CIDR or IP + Netmask."
         warnings.warn(error_message)
         flash(error_message, 'error')
         return render_template('index.html')
