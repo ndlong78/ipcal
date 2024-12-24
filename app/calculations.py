@@ -11,6 +11,17 @@ def calculate_ipv4(ip_address):
     except ValueError:
         return {"error": "Invalid IPv4 address"}
 
+def calculate_ipv6(ip_address):
+    try:
+        ip = ipaddress.ip_address(ip_address)
+        return {
+            "IP Address": str(ip),
+            "Is Private": ip.is_private,
+            "Is Global": not ip.is_private
+        }
+    except ValueError:
+        return {"error": "Invalid IPv6 address"}
+
 def cidr_to_netmask(cidr):
     try:
         network = ipaddress.ip_network('0.0.0.0/' + cidr, strict=False)
@@ -25,20 +36,29 @@ def netmask_to_cidr(netmask):
     except ValueError:
         return None
 
-def calculate_network_and_subnet(ip_address, network_input):
+def calculate_network_and_subnet(ip_address, network_input, ip_version='ipv4'):
     try:
+        if ip_version == 'ipv4':
+            ip_network = ipaddress.IPv4Network
+            ip_interface = ipaddress.IPv4Interface
+            ip_address_class = ipaddress.IPv4Address
+        else:
+            ip_network = ipaddress.IPv6Network
+            ip_interface = ipaddress.IPv6Interface
+            ip_address_class = ipaddress.IPv6Address
+
         if '/' in network_input:
             # Input is in CIDR format
-            network = ipaddress.ip_network(network_input, strict=False)
+            network = ip_network(network_input, strict=False)
         elif ip_address:
             # Input is in IP + Netmask format
-            ip = ipaddress.ip_interface(f"{ip_address}/{network_input}")
+            ip = ip_interface(f"{ip_address}/{network_input}")
             network = ip.network
         else:
             return {"error": "Invalid network input. IP address is required with netmask."}
         
         # Calculate Wildcard, HostMin, HostMax
-        wildcard = str(ipaddress.IPv4Address(int(network.hostmask)))
+        wildcard = str(ip_address_class(int(network.hostmask)))
         host_min = str(network.network_address + 1)
         host_max = str(network.broadcast_address - 1)
         
