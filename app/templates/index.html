@@ -24,9 +24,9 @@
                 <small>Enter a valid IPv4 address (e.g., 192.168.1.1) or IPv6 address (e.g., 2001:db8::1).</small>
             </div>
             <div>
-                <label for="network">Network (CIDR or IP + Netmask):</label>
+                <label for="network">Netmask:</label>
                 <input type="text" id="network" name="network" oninput="filterIP(this)" required>
-                <small>Enter network in CIDR format (e.g., 192.168.1.0/24 or 2001:db8::/32) or IP + Netmask (e.g., 192.168.1.0 255.255.255.0).</small>
+                <small>Enter Subnet masks (IPv4) or prefixes (IPv6) (e.g., 255.255.255.0-24 or 64,80,96).</small>
             </div>
             <button type="submit">Calculate</button>
         </form>
