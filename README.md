@@ -11,9 +11,12 @@ This is a Flask-based application for calculating and validating IPv4 and IPv6 a
 
 ## Requirements
 
-- Python 3.10
-- Flask 2.0.2
-- ipaddress 1.0.23
+Flask==2.0.2
+Werkzeug==2.0.0
+ipaddress==1.0.23
+MarkupSafe==2.1.1
+python-dotenv==0.19.2
+gunicorn==20.1.0
 
 ## Installation
 
@@ -87,3 +90,5 @@ This is a Flask-based application for calculating and validating IPv4 and IPv6 a
 
 ```sh
     docker-compose down
+```
+```
