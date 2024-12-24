@@ -10,5 +10,5 @@ COPY . .
 # Đặt biến môi trường mặc định
 ENV GUNICORN_WORKERS=4
 
-# Sử dụng entrypoint để chạy Gunicorn với biến môi trường
+# Sử dụng lệnh CMD để chạy Gunicorn với module và thuộc tính đúng
 CMD ["gunicorn", "--workers", "${GUNICORN_WORKERS}", "app:app"]

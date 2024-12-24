@@ -17,3 +17,6 @@ def create_app():
     app.register_blueprint(main_bp)
 
     return app
+
+# Đảm bảo rằng app được đặt tên là 'app'
+app = create_app()
