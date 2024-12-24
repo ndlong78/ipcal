@@ -3,7 +3,16 @@ version: '3.8'
 services:
   web:
     build: .
+    image: ipcal_web:latest
     ports:
       - "5000:5000"
     env_file:
       - .env
+    restart: unless-stopped
+    volumes:
+      - .:/app
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

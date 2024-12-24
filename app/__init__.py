@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 
 def create_app():
+    """Create and configure the Flask application."""
     # Load environment variables from .env file
     load_dotenv()
 

@@ -1,6 +1,15 @@
 import ipaddress
 
 def calculate_ipv4(ip_address):
+    """
+    Calculate details for an IPv4 address.
+
+    Args:
+        ip_address (str): The IPv4 address to calculate details for.
+
+    Returns:
+        dict: Dictionary containing IP details or error message.
+    """
     try:
         ip = ipaddress.ip_address(ip_address)
         return {
@@ -12,6 +21,15 @@ def calculate_ipv4(ip_address):
         return {"error": "Invalid IPv4 address"}
 
 def calculate_ipv6(ip_address):
+    """
+    Calculate details for an IPv6 address.
+
+    Args:
+        ip_address (str): The IPv6 address to calculate details for.
+
+    Returns:
+        dict: Dictionary containing IP details or error message.
+    """
     try:
         ip = ipaddress.ip_address(ip_address)
         return {
@@ -23,6 +41,17 @@ def calculate_ipv6(ip_address):
         return {"error": "Invalid IPv6 address"}
 
 def calculate_network_and_subnet(ip_address, network_input, ip_version='ipv4'):
+    """
+    Calculate network and subnet details.
+
+    Args:
+        ip_address (str): The IP address.
+        network_input (str): The network input in CIDR or Netmask format.
+        ip_version (str): The version of IP ('ipv4' or 'ipv6').
+
+    Returns:
+        dict: Dictionary containing network and subnet details or error message.
+    """
     try:
         if ip_version == 'ipv4':
             ip_network = ipaddress.IPv4Network

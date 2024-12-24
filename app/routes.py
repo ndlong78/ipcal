@@ -12,15 +12,14 @@ logging.basicConfig(level=logging.DEBUG)
 main_bp = Blueprint('main', __name__)
 
 def filter_ip_input(ip_input):
-    # Regular expression to match valid IP address characters
+    """Remove invalid characters from the IP input."""
     valid_ip_pattern = re.compile(r'[^0-9a-fA-F:./]')
-    # Remove invalid characters
     filtered_ip = re.sub(valid_ip_pattern, '', ip_input)
     logging.debug(f"Filtered IP input: {filtered_ip}")
     return filtered_ip
 
 def is_valid_cidr_or_netmask(network_input):
-    # Check if it's a valid CIDR
+    """Check if the network input is a valid CIDR or Netmask."""
     try:
         ipaddress.ip_network(network_input, strict=False)
         logging.debug(f"Valid CIDR: {network_input}")
@@ -28,9 +27,8 @@ def is_valid_cidr_or_netmask(network_input):
     except ValueError:
         logging.debug(f"Invalid CIDR: {network_input}")
     
-    # Check if it's a valid Netmask (e.g., "255.255.255.0")
     try:
-        if re.match(r'^(\d{1,3}\.){3}\d{1,3}$', network_input):
+        if re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', network_input):
             ipaddress.IPv4Network(f"0.0.0.0/{network_input}", strict=False)
             logging.debug(f"Valid Netmask: {network_input}")
             return True
@@ -41,10 +39,12 @@ def is_valid_cidr_or_netmask(network_input):
 
 @main_bp.route('/')
 def index():
+    """Render the main index page."""
     return render_template('index.html')
 
 @main_bp.route('/calculate', methods=['POST'])
 def calculate():
+    """Handle the calculation of IP details and network details."""
     result = {}
 
     ip_address = filter_ip_input(request.form.get('ip-address'))
