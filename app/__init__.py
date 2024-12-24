@@ -1,12 +1,16 @@
 from flask import Flask
+from dotenv import load_dotenv
+import os
 
 def create_app():
+    # Load environment variables from .env file
+    load_dotenv()
+
     app = Flask(__name__)
 
-    # Enable debug mode
-    app.config['DEBUG'] = True
-    # Replace 'your_secret_key_here' with an actual secret key
-    app.secret_key = 'J!T$2XSizvQSV4w!'
+    # Get configuration from environment variables
+    app.config['DEBUG'] = os.getenv('DEBUG', 'False') == 'True'
+    app.secret_key = os.getenv('SECRET_KEY')
 
     from .routes import main_bp
     app.register_blueprint(main_bp)
