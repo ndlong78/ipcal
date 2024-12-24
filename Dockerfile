@@ -1,27 +1,20 @@
-# Sử dụng image Python chính thức
+# Use the official Python image from the Docker Hub
 FROM python:3.10-slim
 
-# Đặt biến môi trường để đảm bảo các đầu vào không bị hỏi trong quá trình cài đặt
-ENV PYTHONUNBUFFERED=1
-
-# Tạo thư mục làm việc
+# Set the working directory in the container
 WORKDIR /app
 
-# Sao chép các tệp yêu cầu vào thư mục làm việc
-COPY requirements.txt /app/
+# Copy the requirements file into the container
+COPY requirements.txt .
 
-# Cài đặt các thư viện cần thiết
+# Install the dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Sao chép toàn bộ mã nguồn vào thư mục làm việc
-COPY . /app/
+# Copy the rest of the application code into the container
+COPY . .
 
-# Đặt biến môi trường cho Flask
-ENV FLASK_APP=app.py
-ENV FLASK_ENV=development
-
-# Mở cổng để Flask có thể truy cập từ bên ngoài container
+# Expose the port the app runs on
 EXPOSE 5000
 
-# Chạy ứng dụng
-CMD ["flask", "run", "--host=0.0.0.0"]
+# Command to run the application using Gunicorn
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:create_app()"]
