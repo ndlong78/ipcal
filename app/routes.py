@@ -5,7 +5,7 @@ import ipaddress
 from .calculations import calculate_ipv4, calculate_ipv6, calculate_network_and_subnet
 from .ip_to_regex import ip_to_regex
 
-# Thiết lập logging
+# Set up logging
 logging.basicConfig(level=logging.DEBUG)
 
 # Define the Blueprint before using it
@@ -21,13 +21,13 @@ def filter_ip_input(ip_input):
 
 def is_valid_cidr_or_netmask(network_input):
     try:
-        # Kiểm tra nếu là CIDR
+        # Check if it's a CIDR
         ipaddress.ip_network(network_input, strict=False)
         logging.debug(f"Valid CIDR: {network_input}")
         return True
     except ValueError:
         logging.debug(f"Invalid CIDR: {network_input}")
-        # Kiểm tra nếu là Netmask
+        # Check if it's a Netmask
         parts = network_input.split()
         if len(parts) == 1:  # CIDR notation without IP
             try:
