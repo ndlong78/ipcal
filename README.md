@@ -1,13 +1,13 @@
 # IPCal Application
 
-This is a Flask-based application for calculating and validating IPv4 addresses, subnets, and generating regex patterns for IP ranges.
+This is a Flask-based application for calculating and validating IPv4 and IPv6 addresses, subnets, and generating regex patterns for IP ranges.
 
 ## Features
 
-- Calculate IPv4 details
+- Calculate IPv4 and IPv6 details
 - Convert CIDR to Netmask and vice versa
 - Generate regex patterns for IP ranges
-- Validate IPv4 and subnet inputs
+- Validate IPv4, IPv6, and subnet inputs
 
 ## Requirements
 
@@ -71,59 +71,19 @@ This is a Flask-based application for calculating and validating IPv4 addresses,
     ```sh
     docker-compose up -d
     ```
-5. check docker log
+
+5. Check Docker log:
     ```sh
-    docker logs -f  ipcal_web_1
+    docker logs -f ipcal_web_1
     ```
+
 6. Access the application by navigating to `http://localhost:5000` in your web browser.
 
-## Remover
-### Deactive and remover application folder
+## Remove
+
+### Deactivate and remove application folder
+
 ### Stop docker-compose from ipcal folder 
 
- ```sh
-    /opt/ipcal# docker-compose down
-    ```
-
- ```sh
-    rm -rf /opt/ipcal/
-    ```
-## Project Structure
 ```sh
-/opt/ipcal
-├── app
-│ ├── init.py
-│ ├── calculations.py
-│ ├── ip_to_regex.py
-│ ├── routes.py
-│ └── templates
-│    └── index.html
-│ └── static
-│    └── style.css
-├── requirements.txt
-├── Dockerfile
-├── docker-compose.yml
-├── .dockerignore
-└── run.py
-
-- **app/**: Contains the main application code.
-  - `__init__.py`: Initializes the Flask application.
-  - `calculations.py`: Contains calculation functions for IPv4 and subnet details.
-  - `ip_to_regex.py`: Contains functions to convert IP ranges to regex patterns.
-  - `routes.py`: Defines the routes and logic for the application.
-  - **templates/**: Contains HTML templates.
-    - `index.html`: The main HTML template.
-  - **static/**: Contains static files like CSS.
-    - `style.css`: The main CSS file for styling.
-
-- **requirements.txt**: Lists the Python dependencies.
-- **Dockerfile**: Defines the Docker image for the application.
-- **docker-compose.yml**: Defines the Docker services for the application.
-- **.dockerignore**: Lists files and directories to be ignored by Docker.
-- **run.py**: The main entry point to run the Flask application.
-    
-```
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+    docker-compose down
