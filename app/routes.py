@@ -20,21 +20,23 @@ def filter_ip_input(ip_input):
     return filtered_ip
 
 def is_valid_cidr_or_netmask(network_input):
+    # Check if it's a valid CIDR
     try:
-        # Check if it's a CIDR
         ipaddress.ip_network(network_input, strict=False)
         logging.debug(f"Valid CIDR: {network_input}")
         return True
     except ValueError:
         logging.debug(f"Invalid CIDR: {network_input}")
-        # Check if it's a Netmask (e.g., "255.255.255.0")
-        try:
-            if re.match(r'^(\d{1,3}\.){3}\d{1,3}$', network_input):
-                ipaddress.IPv4Network(f"0.0.0.0/{network_input}", strict=False)
-                logging.debug(f"Valid Netmask: {network_input}")
-                return True
-        except ValueError:
-            logging.debug(f"Invalid Netmask: {network_input}")
+    
+    # Check if it's a valid Netmask (e.g., "255.255.255.0")
+    try:
+        if re.match(r'^(\d{1,3}\.){3}\d{1,3}$', network_input):
+            ipaddress.IPv4Network(f"0.0.0.0/{network_input}", strict=False)
+            logging.debug(f"Valid Netmask: {network_input}")
+            return True
+    except ValueError:
+        logging.debug(f"Invalid Netmask: {network_input}")
+    
     return False
 
 @main_bp.route('/')
