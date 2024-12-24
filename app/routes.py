@@ -29,9 +29,10 @@ def is_valid_cidr_or_netmask(network_input):
         logging.debug(f"Invalid CIDR: {network_input}")
         # Check if it's a Netmask (e.g., "255.255.255.0")
         try:
-            ipaddress.IPv4Network(f"0.0.0.0/{network_input}", strict=False)
-            logging.debug(f"Valid Netmask: {network_input}")
-            return True
+            if re.match(r'^(\d{1,3}\.){3}\d{1,3}$', network_input):
+                ipaddress.IPv4Network(f"0.0.0.0/{network_input}", strict=False)
+                logging.debug(f"Valid Netmask: {network_input}")
+                return True
         except ValueError:
             logging.debug(f"Invalid Netmask: {network_input}")
     return False
