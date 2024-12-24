@@ -1,7 +1,4 @@
 
-### README.md
-
-```markdown
 # IPCal Application
 
 This is a Flask-based application for calculating and validating IPv4 and IPv6 addresses, subnets, and generating regex patterns for IP ranges.
@@ -116,7 +113,6 @@ ipcal/
 ├── docker-compose.yml
 ├── .dockerignore
 └── run.py
-```
 
 - **app/**: Contains the main application code.
   - `__init__.py`: Initializes the Flask application.
