@@ -1,4 +1,5 @@
 import ipaddress
+import re
 
 def calculate_ipv4(ip_address):
     """
@@ -62,15 +63,15 @@ def calculate_network_and_subnet(ip_address, network_input, ip_version='ipv4'):
             ip_interface = ipaddress.IPv6Interface
             ip_address_class = ipaddress.IPv6Address
 
-        if '/' in network_input:
-            # Input is in CIDR format
-            network = ip_network(network_input, strict=False)
-        elif ip_address:
-            # Input is in IP + Netmask format
+        if re.match(r'^\d{1,2}$', network_input) and 0 <= int(network_input) <= 32:
+            # Input is in CIDR prefix length format (e.g., "24")
+            network = ip_network(f"{ip_address}/{network_input}", strict=False)
+        elif re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', network_input):
+            # Input is in netmask format (e.g., "255.255.255.0")
             ip = ip_interface(f"{ip_address}/{network_input}")
             network = ip.network
         else:
-            return {"error": "Invalid network input. IP address is required with netmask."}
+            return {"error": "Invalid network input. Please enter a valid CIDR or Netmask."}
         
         # Calculate Wildcard, HostMin, HostMax
         wildcard = str(ip_address_class(int(network.hostmask)))

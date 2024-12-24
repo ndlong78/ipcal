@@ -21,12 +21,12 @@ def filter_ip_input(ip_input):
 def is_valid_cidr_or_netmask(network_input):
     """Check if the network input is a valid CIDR or Netmask."""
     try:
-        # Check if it is a valid IP network (CIDR)
-        ipaddress.ip_network(network_input, strict=False)
-        logging.debug(f"Valid CIDR: {network_input}")
-        return True
+        # Check if it is a valid CIDR prefix length (e.g., "24")
+        if re.match(r'^\d{1,2}$', network_input) and 0 <= int(network_input) <= 32:
+            logging.debug(f"Valid CIDR prefix length: {network_input}")
+            return True
     except ValueError:
-        logging.debug(f"Invalid CIDR: {network_input}")
+        logging.debug(f"Invalid CIDR prefix length: {network_input}")
     
     try:
         # Check if it is a valid netmask
@@ -34,12 +34,8 @@ def is_valid_cidr_or_netmask(network_input):
             ipaddress.IPv4Network(f"0.0.0.0/{network_input}", strict=False)
             logging.debug(f"Valid Netmask: {network_input}")
             return True
-        # Check if it is a valid CIDR prefix length (e.g., "24")
-        if re.match(r'^\d{1,2}$', network_input) and 0 <= int(network_input) <= 32:
-            logging.debug(f"Valid CIDR prefix length: {network_input}")
-            return True
     except ValueError:
-        logging.debug(f"Invalid Netmask or CIDR prefix length: {network_input}")
+        logging.debug(f"Invalid Netmask: {network_input}")
     
     return False
 
