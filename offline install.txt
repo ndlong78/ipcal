@@ -3,12 +3,12 @@ Bước 1: Tạo danh sách thư viện cần thiết
 ## Requirements
 ```sh
 
-Flask>=2.0.2
-Werkzeug>=2.0.0
+Flask==2.0.2
+Werkzeug==2.0.0
 ipaddress==1.0.23
 MarkupSafe==2.1.1
-python-dotenv
-gunicorn
+python-dotenv==0.19.2
+gunicorn==20.1.0
 
 ```
 Bước 2: Tải xuống các gói Python vào thư mục packages
@@ -17,33 +17,24 @@ Bước 2: Tải xuống các gói Python vào thư mục packages
 pip download -d ./packages -r requirements.txt
 
 ```
-Bước 4: Chỉnh sửa file  Dockerfile
+Bước 4: Chỉnh sửa file  Dockerfile #RUN pip install --no-cache-dir --no-index --find-links=/packages -r requirements.txt
 
 ```sh
-##
-# Use the official Python image from the Docker Hub
+
 FROM python:3.10-slim
 
-# Copy Python packages to container
-COPY packages /packages
-
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy the requirements file into the container
-COPY requirements.txt .
-
-# Install the dependencies
+COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir --no-index --find-links=/packages -r requirements.txt
 
-# Copy the rest of the application code into the container
 COPY . .
 
-# Expose the port the app runs on
-EXPOSE 5000
+# Đặt biến môi trường mặc định
+ENV GUNICORN_WORKERS=4
 
-# Command to run the application using Gunicorn
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:create_app()"]
+# Sử dụng lệnh CMD để chạy Gunicorn với module và thuộc tính đúng
+CMD ["gunicorn", "--workers", "${GUNICORN_WORKERS}", "--bind", "0.0.0.0:8000", "app:app"]
 
 ```
 
