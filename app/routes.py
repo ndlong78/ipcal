@@ -1,22 +1,65 @@
+import logging
+from flask import Blueprint, render_template, request, flash
+import re
+import ipaddress
+from .calculations import calculate_ipv4, calculate_ipv6, calculate_network_and_subnet
+from .ip_to_regex import ip_to_regex
+
+# Thiết lập logging
+logging.basicConfig(level=logging.DEBUG)
+
+# Define the Blueprint before using it
+main_bp = Blueprint('main', __name__)
+
+def filter_ip_input(ip_input):
+    # Regular expression to match valid IP address characters
+    valid_ip_pattern = re.compile(r'[^0-9a-fA-F:./]')
+    # Remove invalid characters
+    filtered_ip = re.sub(valid_ip_pattern, '', ip_input)
+    logging.debug(f"Filtered IP input: {filtered_ip}")
+    return filtered_ip
+
+def is_valid_cidr_or_netmask(network_input):
+    try:
+        # Kiểm tra nếu là CIDR
+        ipaddress.ip_network(network_input, strict=False)
+        logging.debug(f"Valid CIDR: {network_input}")
+        return True
+    except ValueError:
+        logging.debug(f"Invalid CIDR: {network_input}")
+        # Kiểm tra nếu là Netmask
+        parts = network_input.split()
+        if len(parts) == 1:  # CIDR notation without IP
+            try:
+                int(parts[0])
+                return True
+            except ValueError:
+                pass
+        elif len(parts) == 2:  # IP + Netmask
+            ip, netmask = parts
+            try:
+                ipaddress.ip_address(ip)
+                ipaddress.IPv4Network(f"0.0.0.0/{netmask}", strict=False)
+                logging.debug(f"Valid IP + Netmask: {network_input}")
+                return True
+            except ValueError:
+                logging.debug(f"Invalid IP + Netmask: {network_input}")
+    return False
+
+@main_bp.route('/')
+def index():
+    return render_template('index.html')
+
 @main_bp.route('/calculate', methods=['POST'])
 def calculate():
     result = {}
 
-    ip_address = request.form.get('ip-address')
-    network_input = request.form.get('network')
-
-    # Bỏ qua cảnh báo nếu trường không có giá trị
-    if not ip_address:
-        ip_address = "0.0.0.0" # Giá trị mặc định hoặc xử lý khác
-    if not network_input:
-        network_input = "0.0.0.0/0" # Giá trị mặc định hoặc xử lý khác
-
-    ip_address = filter_ip_input(ip_address)
-    network_input = filter_ip_input(network_input)
+    ip_address = filter_ip_input(request.form.get('ip-address'))
+    network_input = filter_ip_input(request.form.get('network'))
 
     logging.debug(f"IP address: {ip_address}, Network input: {network_input}")
 
-    if not is_valid_cidr_or_netmask(network_input):
+    if not network_input or not is_valid_cidr_or_netmask(network_input):
         error_message = "Invalid network input. Please enter a valid CIDR or IP + Netmask."
         flash(error_message, 'error')
         return render_template('index.html')
