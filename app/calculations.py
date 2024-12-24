@@ -63,11 +63,11 @@ def calculate_network_and_subnet(ip_address, network_input, ip_version='ipv4'):
             ip_interface = ipaddress.IPv6Interface
             ip_address_class = ipaddress.IPv6Address
 
-        if re.match(r'^\d{1,2}$', network_input) and 0 <= int(network_input) <= 32:
-            # Input is in CIDR prefix length format (e.g., "24")
+        if re.match(r'^\d{1,2}$', network_input) and 0 <= int(network_input) <= 128:
+            # Input is in CIDR prefix length format (e.g., "24" or "64" for IPv6)
             network = ip_network(f"{ip_address}/{network_input}", strict=False)
-        elif re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', network_input):
-            # Input is in netmask format (e.g., "255.255.255.0")
+        elif re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', network_input) or (':' in network_input):
+            # Input is in netmask format (e.g., "255.255.255.0" for IPv4 or "ffff:ffff:ffff:ffff::" for IPv6)
             ip = ip_interface(f"{ip_address}/{network_input}")
             network = ip.network
         else:
@@ -85,7 +85,7 @@ def calculate_network_and_subnet(ip_address, network_input, ip_version='ipv4'):
             "Wildcard": wildcard,
             "HostMin": host_min,
             "HostMax": host_max,
-            "Total Hosts": network.num_addresses - 2  # Subtract network and broadcast addresses
+            "Total Hosts": network.num_addresses - 2 if ip_version == 'ipv4' else network.num_addresses
         }
     except ValueError:
         return {"error": "Invalid network"}
