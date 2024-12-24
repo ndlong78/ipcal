@@ -21,21 +21,27 @@ def filter_ip_input(ip_input):
 
 def is_valid_cidr_or_netmask(network_input):
     try:
-        # Try to interpret network_input as a CIDR
+        # Kiểm tra nếu là CIDR
         ipaddress.ip_network(network_input, strict=False)
         logging.debug(f"Valid CIDR: {network_input}")
         return True
     except ValueError:
         logging.debug(f"Invalid CIDR: {network_input}")
-        # Split the network_input into IP and netmask
+        # Kiểm tra nếu là Netmask
         parts = network_input.split()
-        if len(parts) == 2:
+        if len(parts) == 1:  # CIDR notation without IP
+            try:
+                int(parts[0])
+                return True
+            except ValueError:
+                pass
+        elif len(parts) == 2:  # IP + Netmask
             ip, netmask = parts
             try:
                 ipaddress.ip_address(ip)
-                if ipaddress.IPv4Network(f"0.0.0.0/{netmask}", strict=False):
-                    logging.debug(f"Valid IP + Netmask: {network_input}")
-                    return True
+                ipaddress.IPv4Network(f"0.0.0.0/{netmask}", strict=False)
+                logging.debug(f"Valid IP + Netmask: {network_input}")
+                return True
             except ValueError:
                 logging.debug(f"Invalid IP + Netmask: {network_input}")
     return False
