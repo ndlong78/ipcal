@@ -77,6 +77,17 @@ This is a Flask-based application for calculating and validating IPv4 addresses,
     ```
 6. Access the application by navigating to `http://localhost:5000` in your web browser.
 
+## Remover
+### Deactive and remover application folder
+### Stop docker-compose from ipcal folder 
+
+ ```sh
+    /opt/ipcal# docker-compose down
+    ```
+
+ ```sh
+    rm -rf /opt/ipcal/
+    ```
 ## Project Structure
 ```sh
 /opt/ipcal
