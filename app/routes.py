@@ -27,23 +27,13 @@ def is_valid_cidr_or_netmask(network_input):
         return True
     except ValueError:
         logging.debug(f"Invalid CIDR: {network_input}")
-        # Check if it's a Netmask
-        parts = network_input.split()
-        if len(parts) == 1:  # CIDR notation without IP
-            try:
-                int(parts[0])
-                return True
-            except ValueError:
-                pass
-        elif len(parts) == 2:  # IP + Netmask
-            ip, netmask = parts
-            try:
-                ipaddress.ip_address(ip)
-                ipaddress.IPv4Network(f"0.0.0.0/{netmask}", strict=False)
-                logging.debug(f"Valid IP + Netmask: {network_input}")
-                return True
-            except ValueError:
-                logging.debug(f"Invalid IP + Netmask: {network_input}")
+        # Check if it's a Netmask (e.g., "255.255.255.0")
+        try:
+            ipaddress.IPv4Network(f"0.0.0.0/{network_input}", strict=False)
+            logging.debug(f"Valid Netmask: {network_input}")
+            return True
+        except ValueError:
+            logging.debug(f"Invalid Netmask: {network_input}")
     return False
 
 @main_bp.route('/')
@@ -60,7 +50,7 @@ def calculate():
     logging.debug(f"IP address: {ip_address}, Network input: {network_input}")
 
     if not network_input or not is_valid_cidr_or_netmask(network_input):
-        error_message = "Invalid network input. Please enter a valid CIDR or IP + Netmask."
+        error_message = "Invalid network input. Please enter a valid CIDR or Netmask."
         flash(error_message, 'error')
         return render_template('index.html')
 
