@@ -130,7 +130,5 @@ ipcal/
 - **.dockerignore**: Lists files and directories to be ignored by Docker.
 - **run.py**: The main entry point to run the Flask application.
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-```
+License
+This project is licensed under the MIT License - see the LICENSE file for details.
