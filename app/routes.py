@@ -13,6 +13,9 @@ main_bp = Blueprint('main', __name__)
 
 def filter_ip_input(ip_input):
     """Remove invalid characters from the IP input."""
+    if not ip_input:
+        return ""
+
     valid_ip_pattern = re.compile(r'[^0-9a-fA-F:./]')
     filtered_ip = re.sub(valid_ip_pattern, '', ip_input)
     logging.debug(f"Filtered IP input: {filtered_ip}")
@@ -83,8 +86,8 @@ def calculate():
 
         if 'error' not in network_result:
             cidr = f"{network_result['Network Address']}/{network_result['CIDR']}"
-            regex_pattern = ip_to_regex(cidr)
-            result['regex'] = {"pattern": regex_pattern}
+            cidr_blocks = ip_to_regex(cidr)
+            result['cidr_blocks'] = cidr_blocks
     except ValueError as e:
         flash(str(e), 'error')
         return render_template('index.html')

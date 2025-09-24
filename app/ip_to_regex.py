@@ -1,67 +1,28 @@
-import re
 import ipaddress
+from typing import List
 
-def ip_to_regex(ip_cidr):
-    """
-    Convert IP address and subnet mask (CIDR) to a regular expression (regex).
+
+def ip_to_regex(ip_cidr: str) -> List[str]:
+    """Return a list of CIDR blocks that cover the provided network.
+
+    The previous implementation attempted to build a regular expression for the
+    IP range by interpolating start and end octets/hextets directly into a
+    pattern. That approach produced invalid expressions such as ``(10-200)``
+    which match the literal string ``"10-200"`` instead of the intended numeric
+    interval. In order to provide reliable information to the caller, we
+    summarise the network into the minimal set of CIDR blocks.
 
     Args:
-        ip_cidr (str): IP address with subnet mask, e.g., "172.30.151.224/27" or "2001:0db8:85a3::/64".
+        ip_cidr: IP address with subnet mask, e.g. ``"172.30.151.224/27"`` or
+            ``"2001:0db8:85a3::/64"``.
 
     Returns:
-        str: Regex matching the IP range.
+        A list of strings representing CIDR blocks that exactly cover the
+        supplied network.
     """
+
     network = ipaddress.ip_network(ip_cidr, strict=False)
-    first_ip = int(network.network_address)
-    last_ip = int(network.broadcast_address)
-
-    def ipv4_to_octets(ip):
-        return [(ip >> 24) & 0xFF, (ip >> 16) & 0xFF, (ip >> 8) & 0xFF, ip & 0xFF]
-
-    def ipv6_to_hextets(ip):
-        return [(ip >> (16 * i)) & 0xFFFF for i in range(7, -1, -1)]
-
-    if network.version == 4:
-        start_octets = ipv4_to_octets(first_ip)
-        end_octets = ipv4_to_octets(last_ip)
-
-        regex_parts = []
-        for i in range(4):
-            if start_octets[i] == end_octets[i]:
-                regex_parts.append(f"{start_octets[i]}")
-            else:
-                regex_parts.append(f"({start_octets[i]}-{end_octets[i]})")
-
-        regex_str = "^" + r"\.".join(regex_parts) + "$"
-    else:
-        start_hextets = ipv6_to_hextets(first_ip)
-        end_hextets = ipv6_to_hextets(last_ip)
-
-        regex_parts = []
-        for i in range(8):
-            if start_hextets[i] == end_hextets[i]:
-                regex_parts.append(f"{start_hextets[i]:x}")
-            else:
-                regex_parts.append(f"({start_hextets[i]:x}-{end_hextets[i]:x})")
-
-        regex_str = "^" + ":".join(regex_parts) + "$"
-
-    return regex_str
-
-def validate_regex(pattern, text):
-    """
-    Validate a regular expression (regex) against a text string.
-
-    Args:
-        pattern (str): Regex pattern.
-        text (str): Text string to check.
-
-    Returns:
-        dict: Validation result, including matched strings or error message.
-    """
-    try:
-        regex = re.compile(pattern)
-        matches = regex.findall(text)
-        return {"matches": matches}
-    except re.error:
-        return {"error": "Invalid regex pattern"}
+    summary = ipaddress.summarize_address_range(
+        network.network_address, network.broadcast_address
+    )
+    return [str(net) for net in summary]

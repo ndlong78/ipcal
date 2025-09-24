@@ -65,9 +65,20 @@ def calculate_ipv4_network_and_subnet(ip_address, network_input):
         
         # Calculate Wildcard, HostMin, HostMax
         wildcard = str(ipaddress.IPv4Address(int(network.hostmask)))
-        host_min = str(network.network_address + 1)
-        host_max = str(network.broadcast_address - 1)
-        
+
+        total_addresses = network.num_addresses
+        if network.prefixlen == 32:
+            host_min = host_max = str(network.network_address)
+            usable_hosts = 1
+        elif network.prefixlen == 31:
+            host_min = str(network.network_address)
+            host_max = str(network.broadcast_address)
+            usable_hosts = 2
+        else:
+            host_min = str(network.network_address + 1)
+            host_max = str(network.broadcast_address - 1)
+            usable_hosts = max(total_addresses - 2, 0)
+
         return {
             "Network Address": str(network.network_address),
             "CIDR": str(network.prefixlen),
@@ -75,7 +86,7 @@ def calculate_ipv4_network_and_subnet(ip_address, network_input):
             "Wildcard": wildcard,
             "HostMin": host_min,
             "HostMax": host_max,
-            "Total Hosts": network.num_addresses - 2  # Subtract network and broadcast addresses
+            "Total Hosts": usable_hosts
         }
     except ValueError:
         return {"error": "Invalid network"}
@@ -103,9 +114,16 @@ def calculate_ipv6_network_and_subnet(ip_address, network_input):
             return {"error": "Invalid network input. Please enter a valid CIDR or Netmask."}
         
         # Calculate HostMin, HostMax
-        host_min = str(network.network_address + 1)
-        host_max = str(network.broadcast_address - 1)
-        
+        total_addresses = network.num_addresses
+        if total_addresses == 1:
+            host_min = host_max = str(network.network_address)
+        elif network.prefixlen == 127:
+            host_min = str(network.network_address)
+            host_max = str(network.broadcast_address)
+        else:
+            host_min = str(network.network_address + 1)
+            host_max = str(network.broadcast_address - 1)
+
         return {
             "Network Address": str(network.network_address),
             "CIDR": str(network.prefixlen),

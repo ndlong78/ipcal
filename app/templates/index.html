@@ -54,9 +54,13 @@
                     <p><strong>{{ key }}:</strong> {{ value }}</p>
                 {% endfor %}
                 
-                {% if result['regex'] %}
-                    <h3>Regex Pattern:</h3>
-                    <pre><code>{{ result['regex']['pattern'] }}</code></pre>
+                {% if result.get('cidr_blocks') %}
+                    <h3>Covering CIDR blocks:</h3>
+                    <ul>
+                        {% for block in result.get('cidr_blocks') %}
+                            <li><code>{{ block }}</code></li>
+                        {% endfor %}
+                    </ul>
                 {% endif %}
             </div>
         {% endif %}
