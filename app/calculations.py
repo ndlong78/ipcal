@@ -3,54 +3,48 @@ import re
 
 
 def calculate_ipv4(ip_address):
-    """Calculate IPv4 address details."""
-
-    try:
-        ip = ipaddress.IPv4Address(ip_address)
-    except ipaddress.AddressValueError:
-        return {"error": "Invalid IPv4 address"}
-
+    """Return IPv4 address details."""
+    ip = ipaddress.IPv4Address(ip_address)
     return {
         "Address": str(ip),
         "Version": "IPv4",
+        "Binary": bin(int(ip))[2:].zfill(32),
+        "Hexadecimal": hex(int(ip))[2:],
         "Is Private": ip.is_private,
-        "Is Global": ip.is_global,
-        "Compressed": ip.exploded,
+        "Reverse Pointer": ip.reverse_pointer,
     }
 
 
 def calculate_ipv6(ip_address):
-    """Calculate IPv6 address details."""
-
-    try:
-        ip = ipaddress.IPv6Address(ip_address)
-    except ipaddress.AddressValueError:
-        return {"error": "Invalid IPv6 address"}
-
+    """Return IPv6 address details."""
+    ip = ipaddress.IPv6Address(ip_address)
     return {
         "Address": str(ip),
         "Version": "IPv6",
+        "Binary": bin(int(ip))[2:].zfill(128),
+        "Hexadecimal": hex(int(ip))[2:],
         "Is Private": ip.is_private,
-        "Is Global": ip.is_global,
-        "Compressed": ip.compressed,
-        "Exploded": ip.exploded,
+        "Reverse Pointer": ip.reverse_pointer,
     }
 
 
-def calculate_ipv4_network_and_subnet(ip_address, network_input):
-    """Calculate network and subnet details for IPv4."""
+def _ipv4_netmask_regex():
+    octet = r"(25[0-5]|2[0-4]\d|1?\d?\d)"
+    return rf"^{octet}(\.{octet}){{3}}$"
 
+
+def calculate_ipv4_network_and_subnet(ip_address, network_input):
+    """Calculate IPv4 network details from CIDR prefix or netmask."""
     try:
-        if re.match(r"^\d{1,2}$", network_input) and 0 <= int(network_input) <= 32:
+        if re.fullmatch(r"\d{1,2}", network_input):
             network = ipaddress.IPv4Network(f"{ip_address}/{network_input}", strict=False)
-        elif re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", network_input):
-            ip = ipaddress.IPv4Interface(f"{ip_address}/{network_input}")
-            network = ip.network
+        elif re.fullmatch(_ipv4_netmask_regex(), network_input):
+            interface = ipaddress.IPv4Interface(f"{ip_address}/{network_input}")
+            network = interface.network
         else:
-            return {"error": "Invalid network input. Please enter a valid CIDR or Netmask."}
+            return {"error": "Network input must be a CIDR prefix (0-32) or IPv4 netmask."}
 
         wildcard = str(ipaddress.IPv4Address(int(network.hostmask)))
-
         total_addresses = network.num_addresses
         if network.prefixlen == 32:
             host_min = host_max = str(network.network_address)
@@ -73,21 +67,20 @@ def calculate_ipv4_network_and_subnet(ip_address, network_input):
             "HostMax": host_max,
             "Total Hosts": usable_hosts,
         }
-    except ValueError:
-        return {"error": "Invalid network"}
+    except ValueError as exc:
+        return {"error": f"Invalid IPv4 network: {exc}"}
 
 
 def calculate_ipv6_network_and_subnet(ip_address, network_input):
-    """Calculate network and subnet details for IPv6."""
-
+    """Calculate IPv6 network details from CIDR prefix or netmask."""
     try:
-        if re.match(r"^\d{1,3}$", network_input) and 0 <= int(network_input) <= 128:
+        if re.fullmatch(r"\d{1,3}", network_input):
             network = ipaddress.IPv6Network(f"{ip_address}/{network_input}", strict=False)
         elif ":" in network_input:
-            ip = ipaddress.IPv6Interface(f"{ip_address}/{network_input}")
-            network = ip.network
+            interface = ipaddress.IPv6Interface(f"{ip_address}/{network_input}")
+            network = interface.network
         else:
-            return {"error": "Invalid network input. Please enter a valid CIDR or Netmask."}
+            return {"error": "Network input must be a CIDR prefix (0-128) or IPv6 netmask."}
 
         total_addresses = network.num_addresses
         if total_addresses == 1:
@@ -105,7 +98,7 @@ def calculate_ipv6_network_and_subnet(ip_address, network_input):
             "Netmask": str(network.netmask),
             "HostMin": host_min,
             "HostMax": host_max,
-            "Total Hosts": network.num_addresses,
+            "Total Hosts": total_addresses,
         }
-    except ValueError:
-        return {"error": "Invalid network"}
+    except ValueError as exc:
+        return {"error": f"Invalid IPv6 network: {exc}"}
