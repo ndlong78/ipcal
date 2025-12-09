@@ -15,51 +15,38 @@ logging.basicConfig(level=logging.DEBUG)
 
 main_bp = Blueprint('main', __name__)
 
-ALLOWED_INPUT_PATTERN = re.compile(r'^[0-9a-fA-F:./]+$')
-_IPV4_NETMASK_REGEX = re.compile(r'^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$')
+
+def filter_ip_input(ip_input):
+    """Remove invalid characters from the IP input."""
+    valid_ip_pattern = re.compile(r'[^0-9a-fA-F:./]')
+    filtered_ip = re.sub(valid_ip_pattern, '', ip_input)
+    logging.debug(f"Filtered IP input: {filtered_ip}")
+    return filtered_ip
 
 
-def validate_raw_input(value, field_name):
-    if value is None or value == '':
-        raise ValueError(f"{field_name} is required.")
-    if not ALLOWED_INPUT_PATTERN.fullmatch(value):
-        raise ValueError(
-            f"{field_name} contains invalid characters. Only digits, a-f, A-F, ':', '.', '/' are allowed."
-        )
-    return value
-
-
-def validate_network_input(network_input, ip_version):
-    if ip_version == 4:
-        if re.fullmatch(r'\d{1,2}', network_input):
-            prefix = int(network_input)
-            if not 0 <= prefix <= 32:
-                raise ValueError("CIDR prefix length for IPv4 must be between 0 and 32.")
-            return
-
-        if _IPV4_NETMASK_REGEX.fullmatch(network_input):
-            try:
+def is_valid_cidr_or_netmask(network_input, ip_version='ipv4'):
+    """Check if the network input is a valid CIDR or Netmask."""
+    try:
+        if ip_version == 'ipv4':
+            if re.match(r'^\d{1,2}$', network_input) and 0 <= int(network_input) <= 32:
+                logging.debug(f"Valid CIDR prefix length: {network_input}")
+                return True
+            if re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', network_input):
                 ipaddress.IPv4Network(f"0.0.0.0/{network_input}", strict=False)
-            except ValueError as exc:
-                raise ValueError(f"IPv4 netmask is not valid: {exc}") from exc
-            return
+                logging.debug(f"Valid Netmask: {network_input}")
+                return True
+        else:
+            if re.match(r'^\d{1,3}$', network_input) and 0 <= int(network_input) <= 128:
+                logging.debug(f"Valid CIDR prefix length: {network_input}")
+                return True
+            if ':' in network_input:
+                ipaddress.IPv6Network(f"::/{network_input}", strict=False)
+                logging.debug(f"Valid Netmask: {network_input}")
+                return True
+    except ValueError:
+        logging.debug(f"Invalid CIDR or Netmask: {network_input}")
 
-        raise ValueError("IPv4 network input must be a CIDR prefix (0-32) or netmask with octets between 0 and 255.")
-
-    if re.fullmatch(r'\d{1,3}', network_input):
-        prefix = int(network_input)
-        if not 0 <= prefix <= 128:
-            raise ValueError("CIDR prefix length for IPv6 must be between 0 and 128.")
-        return
-
-    if ':' in network_input:
-        try:
-            ipaddress.IPv6Network(f"::/{network_input}", strict=False)
-        except ValueError as exc:
-            raise ValueError(f"IPv6 netmask is not valid: {exc}") from exc
-        return
-
-    raise ValueError("IPv6 network input must be a CIDR prefix (0-128) or a valid IPv6 netmask.")
+    return False
 
 
 @main_bp.route('/')
