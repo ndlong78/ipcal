@@ -19,6 +19,12 @@ This is a Flask-based application for calculating and validating IPv4 and IPv6 a
 - python-dotenv 0.19.2
 - gunicorn 20.1.0
 
+## Configuration
+
+- Duplicate `.env.example` to `.env` and adjust values for your environment.
+- `SECRET_KEY` **must** be set to a strong random value in production. The app will refuse to start without it when debug mode is off.
+- `FLASK_DEBUG` should be `False` in production to avoid exposing sensitive information. If `SECRET_KEY` is missing in development mode, the app will generate a temporary key and log a warning; sessions will be reset when the process restarts.
+
 ## Installation
 
 ### Using Virtual Environment
@@ -49,7 +55,12 @@ This is a Flask-based application for calculating and validating IPv4 and IPv6 a
     pip install -r requirements.txt
     ```
 
-5. Run the application:
+5. Copy the sample environment file and update `SECRET_KEY` (and optionally `FLASK_DEBUG`):
+    ```sh
+    cp .env.example .env
+    ```
+
+6. Run the application:
     ```sh
     python3 run.py
     ```
