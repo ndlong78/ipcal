@@ -9,6 +9,8 @@ This is a Flask-based application for calculating and validating IPv4 and IPv6 a
 - Convert CIDR to Netmask and vice versa
 - Generate regex patterns for IP ranges
 - Validate IPv4, IPv6, and subnet inputs
+- CSRF protection for form submissions
+- Simple in-memory rate limiting for the calculation endpoint
 
 ## Requirements
 
@@ -24,6 +26,8 @@ This is a Flask-based application for calculating and validating IPv4 and IPv6 a
 - Duplicate `.env.example` to `.env` and adjust values for your environment.
 - `SECRET_KEY` **must** be set to a strong random value in production. The app will refuse to start without it when debug mode is off.
 - `FLASK_DEBUG` should be `False` in production to avoid exposing sensitive information. If `SECRET_KEY` is missing in development mode, the app will generate a temporary key and log a warning; sessions will be reset when the process restarts.
+- `RATE_LIMIT_PER_MINUTE` controls how many `/calculate` requests are allowed per minute per IP address (default: `60`).
+- `RATE_LIMIT_DISABLED` can be set to `true` to disable rate limiting (useful in tests or local debugging).
 
 ## Installation
 
@@ -64,6 +68,11 @@ This is a Flask-based application for calculating and validating IPv4 and IPv6 a
     ```sh
     python3 run.py
     ```
+
+## Security Notes
+
+- The form includes a CSRF token stored in the session. Ensure cookies are enabled in the browser.
+- Rate limiting is in-memory and resets when the process restarts; for production use, consider a shared store (e.g., Redis).
 
 ### Using Docker
 
