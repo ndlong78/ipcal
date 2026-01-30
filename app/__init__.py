@@ -52,6 +52,9 @@ def create_app(
 
     app.config["SECRET_KEY"] = secret_key
     app.secret_key = secret_key
+    app.config.setdefault("RATE_LIMIT_PER_MINUTE", int(os.getenv("RATE_LIMIT_PER_MINUTE", "60")))
+    app.config.setdefault("RATE_LIMIT_DISABLED", False)
+    app.config["RATE_LIMIT_DISABLED"] = app.config["RATE_LIMIT_DISABLED"] or app.testing
 
     from .routes import main_bp
 
